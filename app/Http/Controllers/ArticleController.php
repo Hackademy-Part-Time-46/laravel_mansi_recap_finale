@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreArticleRequest;
 use App\Models\Article;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -23,7 +24,8 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        return view('articles.create');
+        $categories = Category::all();
+        return view('articles.create', compact('categories'));
     }
 
     /**
@@ -46,6 +48,8 @@ class ArticleController extends Controller
             //'user_id' => Auth::user()->id
             'user_id' => auth()->user()->id
         ]);
+
+        $article->categories()->attach($request->categories);
         return to_route('articles.index')->with('success', 'Articolo Creato');
     }
 
@@ -62,7 +66,8 @@ class ArticleController extends Controller
      */
     public function edit(Article $article)
     {
-        return view('articles.edit', compact('article'));
+        $categories = Category::all();
+        return view('articles.edit', compact('article', 'categories'));
     }
 
     /**
@@ -84,6 +89,8 @@ class ArticleController extends Controller
             //'user_id' => auth()->user()->id
         ]);
 
+        $article->categories()->detach();
+        $article->categories()->attach($request->categories);
         return to_route('articles.index')->with('success', 'Articolo Modificato');
     }
 
@@ -92,6 +99,7 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
+        $article->categories()->detach();
         $article->delete();
         return to_route('articles.index')->with('success', 'Articolo Eliminato');
     }

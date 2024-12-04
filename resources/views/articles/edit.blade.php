@@ -21,7 +21,15 @@
                             {{ $message }}
                         @enderror
                     </div>
-
+                    <div class="mb-3 form-control">
+                        @foreach ($categories as $category)
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="category_id" name="categories[]"
+                                    @if ($article->categories->contains($category->id)) checked @endif value="{{ $category->id }}">
+                                <label class="form-check-label" for="category_id">{{ $category->name }}</label>
+                            </div>
+                        @endforeach
+                    </div>
                     <div class="mb-3 form-floating">
                         <img width="200" src="{{ Storage::url($article->image) }}" class="img-responsive">
                         <input class="form-control" id="image" name="image" value type="file">
